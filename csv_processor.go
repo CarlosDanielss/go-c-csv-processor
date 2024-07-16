@@ -12,6 +12,32 @@ type Filter struct {
 	Value    string
 }
 
+func ProcessCsvData(csvData, selectedColumns, rowFilterDefinitions string) (string, error) {
+	records, err := readCsvData(csvData)
+
+	if err != nil {
+		return "", err
+	}
+
+	headers := records[0]
+	colIndexes, err := getColumnIndexes(headers, selectedColumns)
+
+	if err != nil {
+		return "", err
+	}
+
+	filters, err := parseFilters(rowFilterDefinitions)
+
+	if err != nil {
+		return "", err
+	}
+
+	filteredRecords := applyFilters(records, filters, headers)
+	result := selectColumns(filteredRecords, colIndexes)
+
+	return writeCsvData(result), nil
+}
+
 func readCsvData(csvData string) ([][]string, error) {
 	r := csv.NewReader(strings.NewReader(csvData))
 	records, err := r.ReadAll()
