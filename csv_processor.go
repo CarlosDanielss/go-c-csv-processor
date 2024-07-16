@@ -139,3 +139,12 @@ func selectColumns(records [][]string, colIndexes []int) [][]string {
 
 	return result
 }
+
+func writeCsvData(records [][]string) string {
+	var sb strings.Builder
+	w := csv.NewWriter(&sb)
+
+	w.WriteAll(records)
+
+	return sb.String()
+}
