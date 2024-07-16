@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+type Filter struct {
+	Column   string
+	Operator string
+	Value    string
+}
+
 func readCsvData(csvData string) ([][]string, error) {
 	r := csv.NewReader(strings.NewReader(csvData))
 	records, err := r.ReadAll()
@@ -38,4 +44,33 @@ func getColumnIndexes(headers []string, selectedColumns string) ([]int, error) {
 	}
 
 	return colIndexes, nil
+}
+
+func parseFilters(rowFilterDefinitions string) ([]Filter, error) {
+	filterStrings := strings.Split(rowFilterDefinitions, "\n")
+	filters := make([]Filter, len(filterStrings))
+
+	for i, filterString := range filterStrings {
+		parts := strings.SplitN(filterString, ">", 2)
+
+		if len(parts) == 2 {
+			filters[i] = Filter{parts[0], ">", parts[1]}
+			continue
+		}
+
+		parts = strings.SplitN(filterString, "<", 2)
+
+		if len(parts) == 2 {
+			filters[i] = Filter{parts[0], "<", parts[1]}
+			continue
+		}
+
+		parts = strings.SplitN(filterString, "=", 2)
+
+		if len(parts) == 2 {
+			filters[i] = Filter{parts[0], "=", parts[1]}
+		}
+	}
+
+	return filters, nil
 }
