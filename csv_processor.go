@@ -75,6 +75,19 @@ func parseFilters(rowFilterDefinitions string) ([]Filter, error) {
 	return filters, nil
 }
 
+func applyFilters(records [][]string, filters []Filter, headers []string) [][]string {
+	var result [][]string
+	result = append(result, headers)
+
+	for _, row := range records[1:] {
+		if matchFilters(row, filters, headers) {
+			result = append(result, row)
+		}
+	}
+
+	return result
+}
+
 func matchFilters(row []string, filters []Filter, headers []string) bool {
 	for _, filter := range filters {
 		colIndex := -1
