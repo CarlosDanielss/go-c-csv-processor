@@ -74,3 +74,39 @@ func parseFilters(rowFilterDefinitions string) ([]Filter, error) {
 
 	return filters, nil
 }
+
+func matchFilters(row []string, filters []Filter, headers []string) bool {
+	for _, filter := range filters {
+		colIndex := -1
+
+		for i, header := range headers {
+			if filter.Column == header {
+				colIndex = i
+				break
+			}
+		}
+
+		if colIndex == -1 {
+			return false
+		}
+
+		cellValue := row[colIndex]
+
+		switch filter.Operator {
+		case ">":
+			if cellValue <= filter.Value {
+				return false
+			}
+		case "<":
+			if cellValue >= filter.Value {
+				return false
+			}
+		case "=":
+			if cellValue != filter.Value {
+				return false
+			}
+		}
+	}
+
+	return true
+}
