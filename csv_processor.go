@@ -123,3 +123,19 @@ func matchFilters(row []string, filters []Filter, headers []string) bool {
 
 	return true
 }
+
+func selectColumns(records [][]string, colIndexes []int) [][]string {
+	var result [][]string
+
+	for _, row := range records {
+		selectedRow := make([]string, len(colIndexes))
+
+		for i, index := range colIndexes {
+			selectedRow[i] = row[index]
+		}
+
+		result = append(result, selectedRow)
+	}
+
+	return result
+}
